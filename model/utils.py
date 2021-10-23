@@ -78,6 +78,21 @@ def save_dict_to_json(d, json_path):
         json.dump(d, f, indent=4)
 
 
+def save_history_to_json(h, json_path):
+    """Saves dict of list of floats in json file
+
+    This function will be used to store history data after training to json_path
+
+    Args:
+        h: (dict) of list of float-castable values (np.float, int, float, etc.)
+        json_path: (string) path to json file
+    """
+    with open(json_path, 'w') as f:
+        # We need to convert the values to float for json (it doesn't accept np.array, np.float, )
+        h = {k: [float(n) for n in v] for k, v in h.items()}
+        json.dump(h, f, indent=4)
+
+
 def find_next_path(base_path, base_name):
     """Find a next path name that follows a numbered sequence.
     
@@ -91,4 +106,19 @@ def find_next_path(base_path, base_name):
     i = 0
     while os.path.exists(os.path.join(base_path, base_name + '{}'.format(i))):
         i += 1
-    return os.path.join(base_path, base_name + {}.format(i))
+    return os.path.join(base_path, base_name + '{}'.format(i))
+
+def path_to_next_json(base_path, base_name):
+    """Find a path to next file that follows a numbered sequence.
+    
+    file will be created like {base_name}_{number}.
+    The smallest number that is not used yet is chosen to name next file
+    
+    Args:  
+        base_path: (string) absolute path to file of 'base_name'
+        base_name: (string) base name of a file
+    """
+    i = 0
+    while os.path.exists(os.path.join(base_path, base_name + '{}.json'.format(i))):
+        i += 1
+    return os.path.join(base_path, base_name + '{}.json'.format(i))
