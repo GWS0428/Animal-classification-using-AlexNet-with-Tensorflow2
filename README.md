@@ -9,7 +9,7 @@ This is the repository that implements Alexnet and trains it to classify Animals
 
 I recommends using python3 and conda virtual environment.
 
-```
+``` 
 conda create -n myenv python=3.7
 conda activate myenv
 conda install requirements.txt
@@ -26,7 +26,7 @@ If you want to train our model, download the Animals-10 dataset (~477 MB) contai
 
 Here is the structure of the data after downloading dataset:
 
-'''
+```
 raw-img/
     cane/
         1.jpeg
@@ -35,7 +35,7 @@ raw-img/
         142.jpeg
         ...
     ...
-'''
+```
 
 Since the folder names are written in Italian, you need to rename the folders in English based on the translate.txt file in /data.
 
@@ -71,7 +71,7 @@ We created a `base_model` directory for you under the `experiments` directory. I
 {
     "learning_rate": 1e-3,
     "batch_size": 32,
-    "num_epochs": 10,
+    "num_epochs": 20,
     ...
 }
 ```
@@ -88,17 +88,33 @@ It will instantiate a model and train it on the training set following the param
 
 4. **Display the results** 
 
-'''bash
+To track metrics, start Tensorboard
+
+```bash
 tensorboard --logdir experiments/base_model/logs0
-'''
+```
+
+and then go to localhost:6006.
 
 5. **Evaluation on the test set** 
 
-Once you've run many experiments and selected your best model and hyperparameters based on the performance on the development set, you can finally evaluate the performance of your model on the test set. Run
+Once you've run many experiments and selected your best model and hyperparameters based on the performance on the validation set, you can finally evaluate the performance of your model on the test set. Run
 
 ```bash
 python evaluate.py --data_dir data/Animals --model_dir experiments/base_model
 ```
+
+
+## Training results
+
+I used an equal learning rate for all layers and tried to train the Alexnet with several learning rates. The network was trained until it reach 90% or higher training accuracy on NVIDIA GTX 1650 with max-Q design. The results are summarized as follows.
+
+Learning rate | training epochs | train accuracy | validation accuracy | test accuracy 
+--- | --- | --- | --- |--- 
+1*e^-3 | 40 | 0.9632641077041626 | 0.7368826866149902 | 0.7148303389549255
+1*e^-4 | 20 | 0.9556108117103577 | 0.7391975522041321 | 0.7502859234809875
+1*e^-5 | 20 | 0.9467138648033142 | 0.7218364477157593 | 0.7319862842559814
+1*e^-6 | 80 | 0.9229407906532288 | 0.6813271641731262 | 0.6831871867179871
 
 
 ## Resources
