@@ -8,12 +8,12 @@ import pathlib
 import datetime
 
 import tensorflow as tf
-from tqdm.keras import TqdmCallback
 
 from model.utils import Params
 from model.utils import set_logger
-from model.utils import save_dict_to_json
+from model.utils import save_history_to_json
 from model.utils import find_next_path
+from model.utils import path_to_next_json
 from model.model_fn import build_model
 
 
@@ -84,12 +84,14 @@ if __name__ == '__main__':
     
     if args.restore_from is not None:
         checkpoint_path = find_next_path(os.path.realpath(args.model_dir), 'weights_checkpoint')
-        checkpoint_dir = os.path.join(checkpoint_path, 'cp-{epoch:04d}'.ckpt)
+        checkpoint_dir = os.path.join(checkpoint_path, 'cp-{epoch:04d}.ckpt')
 
+    TRAIN_SIZE = train_generator.n
     cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_dir,
                                                      save_weights_only=True,
+                                                     save_freq='epoch',
                                                      verbose=1,
-                                                     save_freq=args.batch_size)
+                                                     period=5)
     
     # Create a tensorboard callback to save log
     log_dir = os.path.join(args.model_dir, "logs0")
@@ -112,10 +114,12 @@ if __name__ == '__main__':
                                 validation_data=validation_generator,
                                 validation_steps=STEP_SIZE_VALID,
                                 epochs=params.num_epochs,
-                                verbose=0,
-                                callbacks=[cp_callback, tensorboard_callback, TqdmCallback(verbose=2)])
+                                verbose=1,
+                                callbacks=[cp_callback, tensorboard_callback])
 
-    save_path = os.path.join(args.model_dir, "training results.json")
-    save_dict_to_json(history.history, save_path)
+    save_path = os.path.join(args.model_dir, "training_result0.json")
+    if args.restore_from is not None:
+        save_path = path_to_next_json(os.path.realpath(args.model_dir), 'training_result')
+    save_history_to_json(history.history, save_path)
 
     logging.info("End of training for {} epoch(s)".format(params.num_epochs))

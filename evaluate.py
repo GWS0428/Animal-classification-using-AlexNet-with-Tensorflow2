@@ -57,8 +57,8 @@ if __name__ == '__main__':
         model.load_weights(latest)
 
     logging.info("Starting test")
-    results = model.evaluate_generator(test_generator)
+    results = model.evaluate_generator(test_generator, verbose=1)
     results_dict = {'loss': results[0], 'accuracy': results[1]}
-    save_path = os.path.join(args.model_dir, "test results.json")
+    save_path = os.path.join(args.model_dir, "test_result.json")
     save_dict_to_json(results_dict, save_path)
     logging.info("End of test")
