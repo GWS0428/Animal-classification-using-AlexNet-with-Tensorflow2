@@ -7,12 +7,12 @@ This is the repository that implements Alexnet and trains it to classify Animals
 
 ## Requirements
 
-I recommends using python3 and conda virtual environment.
+I recommend using python3 and conda virtual environment.
 
 ``` 
 conda create -n myenv python=3.7
 conda activate myenv
-conda install requirements.txt
+conda install --yes --file requirements.txt
 ```
 
 When you're done working on the project, deactivate the virtual environment with `conda deactivate`.
